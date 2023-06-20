@@ -1,7 +1,7 @@
 from django.urls import path
-from recipes.views import home
+from . import views
 
 urlpatterns = [
-    path('',  home), # Passa o caminho(url) e uma função que vai ser executada # noqa
-
+    path('',  views.home, name="recipe-home"), # Passa o caminho(url) e uma função que vai ser executada # noqa
+    path('recipes/<int:id>/',  views.recipe, name="recipes-recipe")
 ]
