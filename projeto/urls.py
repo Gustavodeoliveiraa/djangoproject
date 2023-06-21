@@ -16,11 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path, include
-# A função vai receber um HttpRequest e retorna um HttpResponse, o django passa
-# de forma automática o HttpRequest para a função
-
+from django.conf.urls.static import static  # é para configurar os arquivos estáticos nas urls # noqa
+from django.conf import settings # é a importação do modulo settings (from recipes import settings),  mas o recomendado é usar o django.conf # noqa
 
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('', include('recipes.urls'))
 ]
+
+# configura o roteamento de urls dos arquivos de mídia no desenvolvimento
+urlpatterns += static(
+    settings.MEDIA_URL, document_root=settings.MEDIA_ROOT
+    ) # entender melhor essa coisa aqui
+ 
