@@ -22,6 +22,7 @@ class RecipeViewsTest(TestCase):
 
     # text fixtures  (teste com conteúdo)
     def test_recipe_home_template_loads_recipes(self):
+        # fixtures sao trechos de códigos que dão suporte para um teste
         category = Category.objects.create(name='Category')
         author = User.objects.create_user(
             first_name='user',
