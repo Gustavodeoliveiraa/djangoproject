@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import User
-
+from django.urls import reverse
+from django.utils.text import slugify
 
 class Category(models.Model):
     name = models.CharField(max_length=65)
@@ -12,9 +13,9 @@ class Category(models.Model):
 class Recipe(models.Model):
     title = models.CharField(max_length=65)
     description = models.CharField(max_length=165)
-    slug = models.SlugField()
+    slug = models.SlugField(unique=True)
     preparation_time = models.IntegerField()
-    preparation_time_unit = models.CharField(max_length=65)    
+    preparation_time_unit = models.CharField(max_length=65)
     serving = models.IntegerField()
     serving_unit = models.CharField(max_length=65)
     preparation_step = models.TextField()
@@ -28,3 +29,13 @@ class Recipe(models.Model):
 
     def __str__(self) -> str:
         return self.title
+
+    def get_absolute_url(self,):
+        return reverse('recipes:recipe', args=(self.id,))
+
+    def save(self, *args, **kwargs):
+        if not self.slug:
+            slug = f'{slugify(self.title)}'
+            self.slug = slug
+
+        return super().save(*args, **kwargs)

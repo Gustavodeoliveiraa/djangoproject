@@ -21,7 +21,8 @@ from django.conf import settings # é a importação do modulo settings (from re
 
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('', include('recipes.urls'))
+    path('', include('recipes.urls')),
+    path('authors/', include('authors.urls')),
 ]
 
 # configura o roteamento de urls dos arquivos de mídia no desenvolvimento
