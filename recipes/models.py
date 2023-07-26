@@ -3,6 +3,7 @@ from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils.text import slugify
 
+
 class Category(models.Model):
     name = models.CharField(max_length=65)
 
@@ -30,7 +31,7 @@ class Recipe(models.Model):
     def __str__(self) -> str:
         return self.title
 
-    def get_absolute_url(self,):
+    def get_absolute_url(self):
         return reverse('recipes:recipe', args=(self.id,))
 
     def save(self, *args, **kwargs):

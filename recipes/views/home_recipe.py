@@ -1,10 +1,12 @@
 from typing import Any, Dict
-from django.db import models
+from django import http
 from django.views.generic import ListView, DetailView
 from recipes.models import Recipe
 from utils.pagination import make_pagination
 import os
 from django.http import Http404
+from django.http import JsonResponse
+from django.forms.models import model_to_dict
 
 from django.db.models import Q
 
@@ -22,6 +24,7 @@ class RecipeListViewBase(ListView):
         qs = qs.filter(
             is_published=True,
         )
+        qs = qs.select_related('author', 'category')
         return qs
 
     def get_context_data(self, *args, **kwargs):
@@ -107,6 +110,7 @@ class RecipeDetail(DetailView):
         qs = qs.filter(
             is_published=True
         )
+
         return qs
 
     def get_context_data(self, **kwargs):
@@ -117,4 +121,40 @@ class RecipeDetail(DetailView):
         })
 
         return ctx
-    
+
+
+class RecipeDetailApi(DetailView):
+    model = Recipe
+
+    def render_to_response(self, context, **response_kwargs):
+        recipe = self.get_context_data()['recipe']
+        recipe_dict = model_to_dict(recipe)
+
+        recipe_dict['created_at'] = str(recipe.created_at)
+        recipe_dict['update_at'] = str(recipe.update_at)
+
+        if recipe_dict.get('cover'):
+            recipe_dict['cover'] = recipe_dict['cover'].url
+        else: 
+            recipe_dict['cover'] = ''
+
+        del recipe_dict['is_published']
+        del recipe_dict['preparation_step_is_html']
+
+        return JsonResponse(
+            recipe_dict,
+            safe=False
+        )
+
+
+class RecipeListViewHomeApi(RecipeListViewBase):
+    template_name = 'recipes/pages/home.html'
+
+    def render_to_response(self, context,  **response_kwargs):
+        recipes = self.get_context_data()['recipes']
+        recipe_list = recipes.object_list.values()
+
+        return JsonResponse(
+            list(recipe_list),
+            safe=False
+        )
